@@ -10,10 +10,11 @@ BIRD_X, BIRD_Y = 50, HEIGHT // 2
 BIRD_RADIUS = 15
 gravity = 0.5
 jump_strength = -8
-pipe_width = 70
+pipe_width = 60
 gap_height = 150
 pipe_speed = 3
 score = 0
+
 
 # Colors
 BLACK = (0, 0, 0)
@@ -37,11 +38,11 @@ background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 ground_image = pygame.image.load("./images/base.png").convert_alpha()
 ground_image = pygame.transform.scale(ground_image, (WIDTH, ground_image.get_height()))
 
-pipe_image = pygame.image.load("./images/pipe-green.png").convert_alpha()
+pipe_image = pygame.image.load("./images/pipe-green.png").convert_alpha()  
 pipe_image_flipped = pygame.transform.flip(pipe_image, False, True)
 
 # Clock for frame rate
-clock = pygame.time.Clock()
+clock = pygame.time.Clock() 
 
 # Game State
 game_started = False
@@ -57,8 +58,10 @@ pipes = []
 
 def create_pipe():
     """Creates a pipe with random height and movement direction."""
-    height = random.randint(100, 400)
-    pipes.append([WIDTH, height, random.choice([-1, 1])])
+    min_height = 50
+    max_height = HEIGHT - gap_height - 50
+    height = random.randint(min_height, max_height)  
+    pipes.append([WIDTH , height , random.choice([-1, 1])])  # 
 
 def move_pipes():
     """Moves pipes left and adds vertical movement."""
@@ -68,7 +71,7 @@ def move_pipes():
         pipe[1] += pipe[2] * 2
         
         # Reverse movement if hitting bounds
-        if pipe[1] <= 50 or pipe[1] >= HEIGHT - gap_height - 50:
+        if pipe[1] <= 50 or pipe[1] >= HEIGHT - gap_height - 50:   
             pipe[2] *= -1  
 
     # Remove pipes that go off-screen and increase score
@@ -79,8 +82,11 @@ def move_pipes():
 def draw_pipes():
     """Draws all pipes on the screen."""
     for pipe in pipes:
-        screen.blit(pipe_image_flipped, (pipe[0], pipe[1] - 320))  
-        screen.blit(pipe_image, (pipe[0], pipe[1] + gap_height))  
+        top_pipe_height = pipe[1] 
+        bottom_pipe_y = pipe[1] + gap_height
+        screen.blit(pygame.transform.scale(pipe_image_flipped, (pipe_width, top_pipe_height)), (pipe[0], 0))
+        screen.blit(pygame.transform.scale(pipe_image, (pipe_width, HEIGHT - bottom_pipe_y)), (pipe[0], bottom_pipe_y))   
+
 
 def reset_bird():
     """Resets the bird position after losing a life."""
